@@ -13,7 +13,18 @@ const shadow = StyleSheet.create({
     shadowRadius: 15,
     elevation: 10,
   },
+  boxShadowTiny: {
+    shadowColor: bg.bgBlack,
+    shadowOffset: {
+      width: 5,
+      height: 18,
+    },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 5,
+  },
 });
+
 
 const container = StyleSheet.create({
   container: {
@@ -23,6 +34,9 @@ const container = StyleSheet.create({
   containerPadding: {
     padding: spacing.medium,
   },
+  bgBase:{
+    backgroundColor: bg.bgPrimary0
+  }
 });
 
 export {shadow, container};

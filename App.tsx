@@ -1,14 +1,9 @@
-
-
 import { createTheme, ThemeProvider } from '@rneui/themed';
 import React from 'react';
-// import { SafeAreaProvider } from 'react-native-safe-area-context';
-import SignIn from './src/scences/sign-in/sign-in';
 import { SafeAreaView } from 'react-native';
 import { bg } from './src/utils/color';
-import Home from './src/scences/home/home';
-import ScreenWrapper from './src/hoc/ScreenWrapper/Swrapper';
-
+import RouteWrapper from './src/router/route';
+import { NavigationContainer } from '@react-navigation/native';
 
 const theme = createTheme({
   lightColors: {
@@ -21,13 +16,11 @@ const theme = createTheme({
 });
 
 function App(): React.JSX.Element {
-
-
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: bg.bgPrimary0, }}>
-      <ThemeProvider theme={theme}>
-        <Home />
-      </ThemeProvider>
+    <SafeAreaView style={{ flex: 1, backgroundColor: bg.bgPrimary5}}>
+        <NavigationContainer>
+          <RouteWrapper />
+        </NavigationContainer>
     </SafeAreaView>
   );
 }

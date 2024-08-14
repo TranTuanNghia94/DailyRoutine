@@ -11,4 +11,13 @@ const flex = {
   flex3: 3,
 }
 
-export {spacing};
+const fontSizes = {
+  small: 12,
+  medium: 14,
+  large: 16,
+  xlarge: 20,
+  xxlarge: 24,
+  xxxlarge: 30,
+}
+
+export {spacing, fontSizes, flex};

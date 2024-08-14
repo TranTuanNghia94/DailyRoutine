@@ -4,6 +4,10 @@ const bg = {
     bgPrimary0: '#F5EEFF',
     bgBlack: '#000000',
     bgWhite: '#FFFFFF',
+    bgOrange: '#FFA500',
+    bgGreen: '#008000',
+    bgRed: '#FF0000',
+    bgGray: '#808080',
 }
 
 const txt = {
