@@ -15,4 +15,15 @@ export const styles = StyleSheet.create({
   tabView: {
     width: '100%',
   },
+  addTaskButton: {
+    backgroundColor: bg.bgPrimary10,
+    padding: spacing.small,
+    borderRadius: spacing.small,
+    alignItems: 'center',
+  },
+  addTaskText: {
+    color: bg.bgWhite,
+    fontSize: fontSizes.large,
+    fontWeight: 'bold',
+  },
 });

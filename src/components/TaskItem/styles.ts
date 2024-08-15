@@ -19,16 +19,11 @@ export const styles = StyleSheet.create({
   textDescription: {
     marginTop: spacing.small,
   },
-  divider: {
-    marginVertical: spacing.medium,
-  },
-  dialogTitle:{
-    fontSize: fontSizes.large,
-    fontWeight: 'bold',
-    marginBottom: spacing.small,
-  },
-  dialogFooter: {
+  footerContent: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
-  }
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: spacing.medium,
+
+  },
 });

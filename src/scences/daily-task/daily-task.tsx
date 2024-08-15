@@ -1,12 +1,33 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { View, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { styles } from './styles';
 import { Icon } from '@rneui/themed';
 import { shadow } from '../../utils/index'
 import Weekly from '../../components/Weekly/weekly';
+import { ITaskDto } from '../../helper/interface';
+import TaskItem from '../../components/TaskItem/task-item';
+import { userKeyStorage, userStorage } from '../../helper/async-storage';
 
 
 const DailyTask = () => {
+    const [tasks, setTasks] = useState<ITaskDto[]>([])
+
+    useEffect(() => {
+        userStorage.addOnValueChangedListener(() => {
+            getData()
+        });
+    }, [])
+
+    useEffect(() => {
+        getData()
+    }, [])
+
+    const getData = () => {
+        const getData = userStorage.getString(userKeyStorage.today)
+        if (getData) {
+            setTasks(JSON.parse(getData))
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -28,42 +49,16 @@ const DailyTask = () => {
 
 
             {/* Schedule List */}
-            <ScrollView style={styles.scheduleContainer} showsVerticalScrollIndicator={false}>
+            {/* <ScrollView style={styles.scheduleContainer} showsVerticalScrollIndicator={false}> */}
+            <FlatList
+                data={tasks}
+                showsVerticalScrollIndicator={false}
+                renderItem={({ item }) => <TaskItem priority={item.priority} title={item.title as string} description={item.description} status={item.status} showAction={false} />}
+                keyExtractor={(item) => item.title as string}
+                contentContainerStyle={[]}
+            />
 
-                <View style={[styles.scheduleContent, shadow.boxShadowTiny]}>
-                    <Text style={styles.subjectText}>Task A</Text>
-                    <View style={styles.statusContent}>
-                        <Icon type='ionicon' name='alert-circle-outline' color={'orange'} size={24} />
-                        <Text style={[styles.statusText, styles.textOrange]}>In-progress</Text>
-                    </View>
-                </View>
-
-
-                <View style={[styles.scheduleContent, shadow.boxShadowTiny]}>
-                    <Text style={styles.subjectText}>Task B</Text>
-                    <View style={styles.statusContent}>
-                        <Icon type='ionicon' name='checkmark-circle-outline' color={'green'} size={24} />
-                        <Text style={[styles.statusText, styles.textGreen]}>Done</Text>
-                    </View>
-                </View>
-
-
-                <View style={[styles.scheduleContent, shadow.boxShadowTiny]}>
-                    <Text style={styles.subjectText}>Task C</Text>
-                    <View style={styles.statusContent}>
-                        <Icon type='ionicon' name='close-circle-outline' color={'red'} size={24} />
-                        <Text style={[styles.statusText, styles.textRed]}>Due date</Text>
-                    </View>
-                </View>
-
-                <View style={[styles.scheduleContent, shadow.boxShadowTiny]}>
-                    <Text style={styles.subjectText}>Task D</Text>
-                    <View style={styles.statusContent}>
-                        <Icon type='ionicon' name='ellipse-outline' color={'gray'} size={24} />
-                        <Text style={[styles.statusText, styles.textGray]}>Plan</Text>
-                    </View>
-                </View>
-            </ScrollView>
+            {/* </ScrollView> */}
         </View >
     );
 }

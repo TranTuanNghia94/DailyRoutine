@@ -10,31 +10,23 @@ const Stack = createNativeStackNavigator();
 
 
 const RouteWrapper = () => {
-    const [signIn, setSignIn] = useState(false);
+    // const [signIn, setSignIn] = useState(false);
 
-    useEffect(() => {
-        checkSignIn()
-    }, [signIn])
+    // useEffect(() => {
+    //     checkSignIn()
+    // }, [signIn])
 
-    const checkSignIn = async () => {
-        const token = await getItem(ITEM_KEYS.token);
+    // const checkSignIn = async () => {
+    //     const token = await getItem(ITEM_KEYS.token);
 
-        if (token) {
-            setSignIn(true)
-        } else {
-            setSignIn(false)
-        }
-    }
+    //     if (token) {
+    //         setSignIn(true)
+    //     } else {
+    //         setSignIn(false)
+    //     }
+    // }
 
-    if (signIn) {
-        return <HomeStackScreen />
-    }
-
-    return (
-        <Stack.Navigator>
-            <Stack.Screen name="SignIn" component={SignIn} />
-        </Stack.Navigator>
-    )
+    return <HomeStackScreen />
 }
 
 export default RouteWrapper
