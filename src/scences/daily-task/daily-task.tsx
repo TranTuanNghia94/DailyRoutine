@@ -1,16 +1,16 @@
 import { View, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { styles } from './styles';
-import { Icon } from '@rneui/themed';
 import { shadow } from '../../utils/index'
 import Weekly from '../../components/Weekly/weekly';
-import { ITaskDto } from '../../helper/interface';
+import { TaskDto } from '../../helper/interface';
 import TaskItem from '../../components/TaskItem/task-item';
 import { userKeyStorage, userStorage } from '../../helper/async-storage';
+import moment from 'moment';
 
 
 const DailyTask = () => {
-    const [tasks, setTasks] = useState<ITaskDto[]>([])
+    const [tasks, setTasks] = useState<TaskDto[]>([])
 
     useEffect(() => {
         userStorage.addOnValueChangedListener(() => {
@@ -28,14 +28,18 @@ const DailyTask = () => {
             setTasks(JSON.parse(getData))
         }
     }
+    const getToday = () => {
+        return moment().format('D MMMM YYYY')
+    }
 
     return (
         <View style={styles.container}>
-            {/* Date Header */}
             <View style={styles.header}>
                 <View>
-                    <Text style={styles.date}>16 September</Text>
-                    <Text style={styles.today}>Today</Text>
+                    <Text style={styles.date}>{getToday()}</Text>
+                    <View>
+                        
+                    </View>
                 </View>
 
                 <View>
@@ -47,18 +51,15 @@ const DailyTask = () => {
 
             <Weekly />
 
-
-            {/* Schedule List */}
-            {/* <ScrollView style={styles.scheduleContainer} showsVerticalScrollIndicator={false}> */}
             <FlatList
                 data={tasks}
                 showsVerticalScrollIndicator={false}
-                renderItem={({ item }) => <TaskItem priority={item.priority} title={item.title as string} description={item.description} status={item.status} showAction={false} />}
+                renderItem={({ item }) => <TaskItem itemData={item} onlyView />}
                 keyExtractor={(item) => item.title as string}
                 contentContainerStyle={[]}
             />
 
-            {/* </ScrollView> */}
+
         </View >
     );
 }

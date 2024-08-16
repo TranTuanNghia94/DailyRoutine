@@ -1,11 +1,11 @@
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
 import { styles } from './styles'
-import { shadow, bg, priority, statusTask } from '../../utils/index'
+import { shadow, priority, statusTask } from '../../utils/index'
 import { Button, Overlay } from '@rneui/themed'
-import { ITaskDto } from '../../helper/interface'
+import { TaskDto } from '../../helper/interface'
 import { userStorage, convertJsonToString, userKeyStorage } from '../../helper/async-storage'
-import moment from 'moment'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 
 const listLevelPriority = [
@@ -20,16 +20,32 @@ const listLevelPriority = [
     }
 ]
 
-const BtnAddTask = () => {
-    const [visible, setVisible] = useState(false);
-    const [data, setData] = useState<ITaskDto>({});
 
+interface IBtnAddTaskProps {
+    btnType: 'add' | 'update',
+    updateData?: (id: string, data: TaskDto) => void,
+    deleteData?: (id: string) => void,
+    dataUpdate?: TaskDto,
+    customBtn?: JSX.Element
+}
+
+const BtnAddTask = (props: IBtnAddTaskProps) => {
+
+    const { btnType, updateData, deleteData, dataUpdate, customBtn } = props
+    const [visible, setVisible] = useState(false);
+    const [data, setData] = useState<TaskDto>({});
 
     useEffect(() => {
+        if (btnType === 'update') {
+            setData(dataUpdate as TaskDto)
+        }
+
         if (!visible) {
             setData({})
         }
-    }, [visible])
+
+
+    }, [dataUpdate, visible])
 
     const toggleOverlay = () => {
         setVisible(!visible);
@@ -54,51 +70,81 @@ const BtnAddTask = () => {
         return !data?.title || !data?.priority
     }
 
-    const handleSubmit = async () => {
-        data.status = statusTask.TODO
+    const handleSubmit = () => {
+        if (btnType === 'add') {
+            executeCreate()
+        } else {
+            executeUpdate()
+        }
+
+        toggleOverlay()
+    }
+
+    const executeUpdate = () => {
+        if (updateData) {
+            updateData(data.id as string, data)
+        }
+    }
+
+    const executeCreate = () => {
         const getData = userStorage.getString(userKeyStorage.today)
         const newData = getData ? JSON.parse(getData) : []
+        data.id = newData.length + 1
+        data.status = 'TODO'
         newData.push(data)
         const stringData = convertJsonToString(newData)
         userStorage.set(userKeyStorage.today, stringData)
-        toggleOverlay()
     }
+
+    const renderBtnByType = useCallback(() => {
+        if (btnType === 'add') {
+            return <TouchableOpacity onPress={toggleOverlay} style={[styles.addTaskButton, shadow.boxShadowTiny]} activeOpacity={0.7}>
+                <Text style={styles.addTaskText}>+ Add Task</Text>
+            </TouchableOpacity>
+        } else {
+            return <TouchableOpacity onPress={toggleOverlay} activeOpacity={0.7}>
+                <Text style={styles.textModify}>Modify</Text>
+            </TouchableOpacity>
+        }
+    }, [data, btnType, visible])
 
 
     return (
         <View>
-            <TouchableOpacity onPress={toggleOverlay} style={[styles.addTaskButton, shadow.boxShadowTiny]} activeOpacity={0.7}>
-                <Text style={styles.addTaskText}>+ Add Task</Text>
-            </TouchableOpacity>
+            {renderBtnByType()}
 
-            <Overlay overlayStyle={styles.overlayContainer} isVisible={visible} onBackdropPress={toggleOverlay}>
-                <View>
-                    <Text>Priority</Text>
-                    <View style={styles.levelChipContainer}>
-                        {
-                            listLevelPriority.map((item) =>
-                                <Button key={item.title} onPress={() => handleSelectPriority(item.title)}
-                                    type={isSelectedPriority(item.title) ? 'solid' : 'outline'}
-                                    titleStyle={isSelectedPriority(item.title) ? styles.textBtn : styles.textOutlineBtn}
-                                    buttonStyle={isSelectedPriority(item.title) ? styles.levelBtn : styles.levelOutlineBtn} title={item.title} />)
-                        }
+            <Overlay overlayStyle={styles.overlayContainer} isVisible={visible} onBackdropPress={() => { }}>
+                <KeyboardAwareScrollView
+                    style={{ flex: 1 }}
+                    scrollEnabled={true}
+                >
+                    <View>
+                        <Text>Priority</Text>
+                        <View style={styles.levelChipContainer}>
+                            {
+                                listLevelPriority.map((item) =>
+                                    <Button key={item.title} onPress={() => handleSelectPriority(item.title)}
+                                        type={isSelectedPriority(item.title) ? 'solid' : 'outline'}
+                                        titleStyle={isSelectedPriority(item.title) ? styles.textBtn : styles.textOutlineBtn}
+                                        buttonStyle={isSelectedPriority(item.title) ? styles.levelBtn : styles.levelOutlineBtn} title={item.title} />)
+                            }
+                        </View>
                     </View>
-                </View>
 
-                <View style={styles.spacingVertical}>
-                    <Text>Title</Text>
-                    <TextInput onChange={(e) => handleTextChange('title', e.nativeEvent.text)} style={styles.inputTitle} multiline placeholder='Title' returnKeyType='done' />
-                </View>
+                    <View style={styles.spacingVertical}>
+                        <Text>Title</Text>
+                        <TextInput defaultValue={data?.title} value={data?.title} onChange={(e) => handleTextChange('title', e.nativeEvent.text)} style={styles.inputTitle} multiline placeholder='Title' />
+                    </View>
 
-                <ScrollView showsVerticalScrollIndicator={false}>
+                    <ScrollView automaticallyAdjustKeyboardInsets showsVerticalScrollIndicator={false}>
+                        <Text>Description</Text>
+                        <TextInput defaultValue={data?.description} value={data?.description} onChange={(e) => handleTextChange('description', e.nativeEvent.text)} style={styles.inputTitle} multiline placeholder='Description' />
+                    </ScrollView>
+                </KeyboardAwareScrollView>
 
-                    <Text>Description</Text>
-                    <TextInput onChange={(e) => handleTextChange('description', e.nativeEvent.text)} style={styles.inputTitle} multiline placeholder='Description' returnKeyType='done' />
-
-                </ScrollView>
-
-                <View>
-                    <Button onPress={handleSubmit} buttonStyle={styles.btnCreate} disabled={disableBtn()}>Create</Button>
+                <View style={styles.btnContainer}>
+                    <Button onPress={toggleOverlay} buttonStyle={styles.btnClose}>Close</Button>
+                    <Button onPress={handleSubmit} buttonStyle={styles.btnCreate} disabled={disableBtn()}>Save</Button>
                 </View>
             </Overlay>
         </View>

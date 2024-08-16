@@ -1,25 +1,28 @@
-import { View, Text, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { styles } from './styles'
-import { Card, Divider, Icon, Tab, TabView } from '@rneui/themed';
-import { shadow, bg } from '../../utils/index'
+import { Tab, TabView } from '@rneui/themed';
 import TaskItem from '../../components/TaskItem/task-item';
 import BtnAddTask from '../../components/ButtonAddTask/btn-add-task';
-import { ITaskDto } from '../../helper/interface';
-import { userKeyStorage, userStorage } from '../../helper/async-storage';
+import { TaskDto, TaskStatus } from '../../helper/interface';
+import { convertJsonToString, userKeyStorage, userStorage } from '../../helper/async-storage';
+import { ParamListBase, RouteProp } from '@react-navigation/native';
 
-const Tasks = () => {
+
+interface ITasksProps {
+  route: RouteProp<ParamListBase, "Tasks">;
+  navigation: any;
+}
+
+const Tasks = (props: ITasksProps) => {
   const [index, setIndex] = useState(0);
-
-  const [tasks, setTasks] = useState<ITaskDto[]>([])
+  const [tasks, setTasks] = useState<TaskDto[]>([])
 
   useEffect(() => {
     userStorage.addOnValueChangedListener(() => {
       getData()
     });
-  }, [])
 
-  useEffect(() => {
     getData()
   }, [])
 
@@ -30,6 +33,35 @@ const Tasks = () => {
     }
   }
 
+  const updateData = (id: string, dataTask: TaskDto) => {
+    if (id && tasks) {
+      const index = tasks.findIndex((task) => task.id === id);
+      if (index !== -1) {
+        const newTasks = [...tasks];
+        newTasks[index] = { ...newTasks[index], ...dataTask };
+        setTasks(newTasks);
+        const stringData = convertJsonToString(newTasks)
+        userStorage.set(userKeyStorage.today, stringData)
+      }
+    }
+  }
+
+  const deleteData = (id: string) => {
+    if (id && tasks) {
+      const index = tasks.findIndex((task) => task.id === id);
+      if (index !== -1) {
+        const newTasks = [...tasks];
+        newTasks.splice(index, 1);
+        setTasks(newTasks);
+        const stringData = convertJsonToString(newTasks)
+        userStorage.set(userKeyStorage.today, stringData)
+      }
+    }
+  }
+
+  const handlFilter = (status: TaskStatus) => {
+    return tasks.filter((task) => task.status === status)
+  }
 
   return (
     <View style={styles.container}>
@@ -38,11 +70,15 @@ const Tasks = () => {
           indicatorStyle={styles.tabHeader}>
           <Tab.Item
             title="All"
-            titleStyle={{ fontSize: 12 }}
+            titleStyle={styles.titleText}
+          />
+          <Tab.Item
+            title="Todo"
+            titleStyle={styles.titleText}
           />
           <Tab.Item
             title="Done"
-            titleStyle={{ fontSize: 12 }}
+            titleStyle={styles.titleText}
           />
         </Tab>
 
@@ -51,16 +87,25 @@ const Tasks = () => {
             <FlatList
               data={tasks}
               showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => <TaskItem priority={item.priority} title={item.title as string} description={item.description} status={item.status} showAction />}
+              renderItem={({ item }) => <TaskItem deleteData={deleteData} updateData={updateData} itemData={item}  />}
               keyExtractor={(item) => item.title as string}
               contentContainerStyle={[]}
             />
           </TabView.Item>
           <TabView.Item style={styles.tabView}>
             <FlatList
-              data={tasks}
+              data={handlFilter('TODO')}
               showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => <TaskItem priority={item.priority} title={item.title as string} description={item.description} status={item.status} showAction />}
+              renderItem={({ item }) => <TaskItem itemData={item} />}
+              keyExtractor={(item) => item.title as string}
+              contentContainerStyle={[]}
+            />
+          </TabView.Item>
+          <TabView.Item style={styles.tabView}>
+            <FlatList
+              data={handlFilter('DONE')}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }) => <TaskItem itemData={item} onlyView />}
               keyExtractor={(item) => item.title as string}
               contentContainerStyle={[]}
             />
@@ -68,7 +113,7 @@ const Tasks = () => {
         </TabView>
       </>
 
-      <BtnAddTask />
+      <BtnAddTask btnType='add' />
     </View>
   )
 }

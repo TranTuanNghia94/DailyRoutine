@@ -24,6 +24,29 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: spacing.medium,
-
   },
+  listItemContainer: {
+    backgroundColor: bg.bgPrimary5,
+  },
+  itemContent: {
+    width: '100%',
+    paddingVertical: spacing.medium,
+  },
+  textModify: {
+    color: bg.bgPrimary10,
+    fontSize: fontSizes.xlarge,
+    textAlign: 'center',
+  },
+  textDelete: {
+    color: bg.bgRed,
+    fontSize: fontSizes.xlarge,
+    textAlign: 'center',
+  },
+  divider:{
+    width: '100%',
+    backgroundColor: bg.bgWhite
+  },
+  chipContainer:{
+    backgroundColor: bg.bgPrimary10,
+  }
 });

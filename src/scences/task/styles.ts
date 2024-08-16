@@ -8,12 +8,16 @@ export const styles = StyleSheet.create({
     backgroundColor: bg.bgPrimary0,
   },
   tabHeader: {
-    backgroundColor: bg.bgPrimary0,
-    borderBottomWidth: 1,
-    borderBottomColor: bg.bgPrimary5,
+    borderBottomWidth: 2,
+    borderBottomColor: bg.bgPrimary10,
   },
   tabView: {
     width: '100%',
+  },
+  titleText:{
+    fontSize: fontSizes.large,
+    color: bg.bgPrimary10,
+    fontWeight: 'bold',
   },
   addTaskButton: {
     backgroundColor: bg.bgPrimary10,

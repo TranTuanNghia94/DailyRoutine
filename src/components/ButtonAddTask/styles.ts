@@ -1,10 +1,12 @@
 import {StyleSheet} from 'react-native';
 import {spacing, bg, fontSizes} from '../../utils/index';
 
+
 export const styles = StyleSheet.create({
   addTaskButton: {
     backgroundColor: bg.bgPrimary10,
-    padding: spacing.small,
+    paddingHorizontal: spacing.small,
+    paddingVertical: spacing.medium,
     borderRadius: spacing.small,
     alignItems: 'center',
   },
@@ -13,12 +15,23 @@ export const styles = StyleSheet.create({
     fontSize: fontSizes.large,
     fontWeight: 'bold',
   },
+  btnContainer:{
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginTop: spacing.small,
+  },
   btnCreate: {
     borderRadius: spacing.small,
     backgroundColor: bg.bgPrimary10,
+    paddingHorizontal: spacing.medium,
+  },
+  btnClose: {
+    borderRadius: spacing.small,
+    backgroundColor: bg.bgGray,
+    paddingHorizontal: spacing.medium,
   },
   overlayContainer: {
-    height: '50%',
+    height: 400,
     width: '90%',
     display: 'flex',
     flexDirection: 'column',
@@ -56,5 +69,14 @@ export const styles = StyleSheet.create({
   },
   spacingVertical: {
     marginVertical: spacing.medium,
+  },
+  itemContent: {
+    width: '100%',
+    paddingVertical: spacing.medium,
+  },
+  textModify: {
+    color: bg.bgPrimary10,
+    fontSize: fontSizes.xlarge,
+    textAlign: 'center',
   },
 });

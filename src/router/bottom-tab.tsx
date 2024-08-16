@@ -20,7 +20,7 @@ const screenOptions = (title: string): NativeStackNavigationOptions => {
     },
     headerTitle: title,
     headerTintColor: bg.bgPrimary10,
-    headerBackTitleVisible: false,
+    headerBackTitleVisible: false
   }
 }
 
@@ -34,8 +34,8 @@ export const HomeStackScreen = () => {
       <HomeStack.Screen name="DailyTask" options={screenOptions('Daily Task')} >
         {() => <DailyTask />}
       </HomeStack.Screen>
-      <HomeStack.Screen name="Tasks" options={screenOptions(`Today's Tasks`)} >
-        {() => <Tasks />}
+      <HomeStack.Screen name="Tasks" options={screenOptions(`Today's Tasks`)}  >
+        {(props) => <Tasks {...props} />}
       </HomeStack.Screen>
     </HomeStack.Navigator>
   );
