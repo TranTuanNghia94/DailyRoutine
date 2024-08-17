@@ -11,3 +11,11 @@ export interface TaskDto {
   priority?: string;
   date?: Date;
 }
+
+
+export interface DateSelectDto {
+    day: number;
+    month: number;
+    year: number;
+    weekday: number;
+}

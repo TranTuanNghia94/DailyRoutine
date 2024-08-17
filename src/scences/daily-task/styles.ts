@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {fontSizes, spacing, bg} from '../../utils/index'
+import {fontSizes, spacing, bg} from '../../utils/index';
 
 export const styles = StyleSheet.create({
   container: {
@@ -22,10 +22,7 @@ export const styles = StyleSheet.create({
     color: bg.bgBlack,
   },
   addTaskButton: {
-    backgroundColor: bg.bgPrimary10,
-    padding: spacing.small,
-    borderRadius: spacing.small,
-    alignItems: 'center',
+    marginVertical: spacing.small,
   },
   addTaskText: {
     color: bg.bgWhite,
@@ -52,12 +49,12 @@ export const styles = StyleSheet.create({
   statusContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: spacing.tiny
+    marginTop: spacing.tiny,
   },
-  statusText:{
+  statusText: {
     marginHorizontal: spacing.tiny,
     fontSize: fontSizes.medium,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   textOrange: {
     color: bg.bgOrange,

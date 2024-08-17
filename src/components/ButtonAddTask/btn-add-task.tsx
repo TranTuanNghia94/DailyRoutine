@@ -26,12 +26,13 @@ interface IBtnAddTaskProps {
     updateData?: (id: string, data: TaskDto) => void,
     deleteData?: (id: string) => void,
     dataUpdate?: TaskDto,
-    customBtn?: JSX.Element
+    customBtn?: JSX.Element,
+    keyStorage?: string
 }
 
 const BtnAddTask = (props: IBtnAddTaskProps) => {
 
-    const { btnType, updateData, deleteData, dataUpdate, customBtn } = props
+    const { btnType, updateData, deleteData, dataUpdate, customBtn, keyStorage } = props
     const [visible, setVisible] = useState(false);
     const [data, setData] = useState<TaskDto>({});
 
@@ -87,13 +88,12 @@ const BtnAddTask = (props: IBtnAddTaskProps) => {
     }
 
     const executeCreate = () => {
-        const getData = userStorage.getString(userKeyStorage.today)
-        const newData = getData ? JSON.parse(getData) : []
-        data.id = newData.length + 1
-        data.status = 'TODO'
-        newData.push(data)
-        const stringData = convertJsonToString(newData)
-        userStorage.set(userKeyStorage.today, stringData)
+        const keyData = keyStorage || userKeyStorage.today;
+        const newData = JSON.parse(userStorage.getString(keyData) || '[]');
+        data.id = newData.length + 1;
+        data.status = 'TODO';
+        newData.push(data);
+        userStorage.set(keyData, JSON.stringify(newData));
     }
 
     const renderBtnByType = useCallback(() => {

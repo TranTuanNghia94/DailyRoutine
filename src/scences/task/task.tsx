@@ -5,8 +5,9 @@ import { Tab, TabView } from '@rneui/themed';
 import TaskItem from '../../components/TaskItem/task-item';
 import BtnAddTask from '../../components/ButtonAddTask/btn-add-task';
 import { TaskDto, TaskStatus } from '../../helper/interface';
-import { convertJsonToString, userKeyStorage, userStorage } from '../../helper/async-storage';
+import { userKeyStorage, userStorage } from '../../helper/async-storage';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
+import { deleteDataStorage, updateDataStorage } from '../../hoc/common-func';
 
 
 interface ITasksProps {
@@ -34,29 +35,11 @@ const Tasks = (props: ITasksProps) => {
   }
 
   const updateData = (id: string, dataTask: TaskDto) => {
-    if (id && tasks) {
-      const index = tasks.findIndex((task) => task.id === id);
-      if (index !== -1) {
-        const newTasks = [...tasks];
-        newTasks[index] = { ...newTasks[index], ...dataTask };
-        setTasks(newTasks);
-        const stringData = convertJsonToString(newTasks)
-        userStorage.set(userKeyStorage.today, stringData)
-      }
-    }
+    updateDataStorage({ id, keyData: userKeyStorage.today, dataTask, data: tasks, callBackFunc: setTasks })
   }
 
   const deleteData = (id: string) => {
-    if (id && tasks) {
-      const index = tasks.findIndex((task) => task.id === id);
-      if (index !== -1) {
-        const newTasks = [...tasks];
-        newTasks.splice(index, 1);
-        setTasks(newTasks);
-        const stringData = convertJsonToString(newTasks)
-        userStorage.set(userKeyStorage.today, stringData)
-      }
-    }
+    deleteDataStorage({ id, keyData: userKeyStorage.today, data: tasks, callBackFunc: setTasks })
   }
 
   const handlFilter = (status: TaskStatus) => {
@@ -87,7 +70,7 @@ const Tasks = (props: ITasksProps) => {
             <FlatList
               data={tasks}
               showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => <TaskItem deleteData={deleteData} updateData={updateData} itemData={item}  />}
+              renderItem={({ item }) => <TaskItem deleteData={deleteData} updateData={updateData} itemData={item} />}
               keyExtractor={(item) => item.title as string}
               contentContainerStyle={[]}
             />
